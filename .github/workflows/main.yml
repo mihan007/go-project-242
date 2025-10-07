@@ -18,6 +18,6 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.1
+          version: latest
       - name: Run tests
         run: make test
