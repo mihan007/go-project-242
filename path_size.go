@@ -11,7 +11,10 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 		return "", err
 	}
 
-	return HumanReadableSize(size), nil
+	if human {
+		return HumanReadableSize(size), nil
+	}
+	return fmt.Sprintf("%dB", size), nil
 }
 
 func GetSize(path string) (int64, error) {

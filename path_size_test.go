@@ -1,6 +1,7 @@
 package code
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -41,5 +42,54 @@ func TestGetSizeDirWithTwoFiles(t *testing.T) {
 	want := int64(5)
 	got, err := GetSize(path)
 	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeB(t *testing.T) {
+	size := int64(1)
+	want := "1B"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeKB(t *testing.T) {
+	size := int64(1024)
+	want := "1KB"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeMB(t *testing.T) {
+	size := int64(math.Pow(1024, 2))
+	want := "1MB"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeGB(t *testing.T) {
+	size := int64(math.Pow(1024, 3))
+	want := "1GB"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeTB(t *testing.T) {
+	size := int64(math.Pow(1024, 4))
+	want := "1TB"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizePB(t *testing.T) {
+	size := int64(math.Pow(1024, 5))
+	want := "1PB"
+	got := HumanReadableSize(size)
+	require.Equal(t, want, got)
+}
+
+func TestHumanReadableSizeEB(t *testing.T) {
+	size := int64(math.Pow(1024, 6))
+	want := "1EB"
+	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
