@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var human, all bool
+var human, all, recursive bool
 
 func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 	filename := ""
@@ -21,7 +21,7 @@ func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 		if err != nil {
 			return err
 		}
-		res, err := code.GetPathSize(filepath.Join(dir, filename), false, human, all)
+		res, err := code.GetPathSize(filepath.Join(dir, filename), recursive, human, all)
 		if err != nil {
 			return err
 		}
@@ -49,6 +49,13 @@ func main() {
 				Usage:       "include hidden files and directories",
 				Destination: &all,
 				Aliases:     []string{"a"},
+			},
+			&cli.BoolFlag{
+				Name:        "recursive",
+				Value:       false,
+				Usage:       "recursive size of directories",
+				Destination: &recursive,
+				Aliases:     []string{"r"},
 			},
 		},
 	}
