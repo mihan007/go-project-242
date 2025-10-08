@@ -33,7 +33,7 @@ func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 func main() {
 	cmd := &cli.Command{
 		Name:   "hexlet-path-size",
-		Usage:  "print size of a file or directory",
+		Usage:  "print size of a file or directory; supports -r (recursive), -H (human-readable), -a (include hidden)",
 		Action: PrintFileOrDirSize,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
