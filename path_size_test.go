@@ -1,7 +1,6 @@
 package code
 
 import (
-	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -53,42 +52,42 @@ func TestHumanReadableSizeB(t *testing.T) {
 }
 
 func TestHumanReadableSizeKB(t *testing.T) {
-	size := int64(1024)
+	size := int64(1 << 10)
 	want := "1KB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeMB(t *testing.T) {
-	size := int64(math.Pow(1024, 2))
+	size := int64(1 << 20)
 	want := "1MB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeGB(t *testing.T) {
-	size := int64(math.Pow(1024, 3))
+	size := int64(1 << 30)
 	want := "1GB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeTB(t *testing.T) {
-	size := int64(math.Pow(1024, 4))
+	size := int64(1 << 40)
 	want := "1TB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizePB(t *testing.T) {
-	size := int64(math.Pow(1024, 5))
+	size := int64(1 << 50)
 	want := "1PB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeEB(t *testing.T) {
-	size := int64(math.Pow(1024, 6))
+	size := int64(1 << 60)
 	want := "1EB"
 	got := HumanReadableSize(size)
 	require.Equal(t, want, got)
