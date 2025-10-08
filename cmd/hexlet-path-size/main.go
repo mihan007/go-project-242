@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var human bool
+var human, all bool
 
 func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 	filename := ""
@@ -21,7 +21,7 @@ func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 		if err != nil {
 			return err
 		}
-		res, err := code.GetPathSize(filepath.Join(dir, filename), false, human, false)
+		res, err := code.GetPathSize(filepath.Join(dir, filename), false, human, all)
 		if err != nil {
 			return err
 		}
@@ -42,6 +42,13 @@ func main() {
 				Usage:       "human-readable sizes (auto-select unit)",
 				Destination: &human,
 				Aliases:     []string{"H"},
+			},
+			&cli.BoolFlag{
+				Name:        "all",
+				Value:       false,
+				Usage:       "include hidden files and directories",
+				Destination: &all,
+				Aliases:     []string{"a"},
 			},
 		},
 	}

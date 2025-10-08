@@ -3,10 +3,11 @@ package code
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
-	size, err := GetSize(path)
+	size, err := GetSize(path, all)
 	if err != nil {
 		return "", err
 	}
@@ -17,7 +18,7 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 	return fmt.Sprintf("%dB", size), nil
 }
 
-func GetSize(path string) (int64, error) {
+func GetSize(path string, all bool) (int64, error) {
 	fileInfo, err := os.Lstat(path)
 	if err != nil {
 		return 0, err
@@ -30,6 +31,9 @@ func GetSize(path string) (int64, error) {
 		}
 		size := int64(0)
 		for _, file := range files {
+			if !all && strings.HasPrefix(file.Name(), ".") {
+				continue
+			}
 			fileInfo, err := file.Info()
 			if err != nil {
 				return 0, err

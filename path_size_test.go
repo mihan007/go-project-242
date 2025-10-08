@@ -9,7 +9,7 @@ import (
 func TestGetSizeZeroFile(t *testing.T) {
 	path := "testdata/file0.txt"
 	want := int64(0)
-	got, err := GetSize(path)
+	got, err := GetSize(path, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -17,21 +17,21 @@ func TestGetSizeZeroFile(t *testing.T) {
 func TestGetSizeNonZeroFile(t *testing.T) {
 	path := "testdata/file1.txt"
 	want := int64(1)
-	got, err := GetSize(path)
+	got, err := GetSize(path, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
 
 func TestGetSizeNonExistentFile(t *testing.T) {
 	path := "testdata/file2.txt"
-	_, err := GetSize(path)
+	_, err := GetSize(path, false)
 	require.Error(t, err)
 }
 
 func TestGetSizeDirWithOneFile(t *testing.T) {
 	path := "testdata/dir1"
 	want := int64(2)
-	got, err := GetSize(path)
+	got, err := GetSize(path, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -39,7 +39,20 @@ func TestGetSizeDirWithOneFile(t *testing.T) {
 func TestGetSizeDirWithTwoFiles(t *testing.T) {
 	path := "testdata/dir2"
 	want := int64(5)
-	got, err := GetSize(path)
+	got, err := GetSize(path, false)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestGetSizeDirWithHiddenFiles(t *testing.T) {
+	path := "testdata/dir3"
+	want := int64(0)
+	got, err := GetSize(path, false)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+
+	want = int64(4)
+	got, err = GetSize(path, true)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
