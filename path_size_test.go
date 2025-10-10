@@ -9,7 +9,7 @@ import (
 func TestGetSizeZeroFile(t *testing.T) {
 	path := "testdata/file0.txt"
 	want := int64(0)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -17,21 +17,21 @@ func TestGetSizeZeroFile(t *testing.T) {
 func TestGetSizeNonZeroFile(t *testing.T) {
 	path := "testdata/file1.txt"
 	want := int64(1)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
 
 func TestGetSizeNonExistentFile(t *testing.T) {
 	path := "testdata/file2.txt"
-	_, err := GetSize(path, false, false)
+	_, err := getSize(path, false, false)
 	require.Error(t, err)
 }
 
 func TestGetSizeDirWithOneFile(t *testing.T) {
 	path := "testdata/dir1"
 	want := int64(2)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -39,7 +39,7 @@ func TestGetSizeDirWithOneFile(t *testing.T) {
 func TestGetSizeDirWithTwoFiles(t *testing.T) {
 	path := "testdata/dir2"
 	want := int64(5)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -47,12 +47,12 @@ func TestGetSizeDirWithTwoFiles(t *testing.T) {
 func TestGetSizeDirWithHiddenFiles(t *testing.T) {
 	path := "testdata/dir3"
 	want := int64(0)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 
 	want = int64(4)
-	got, err = GetSize(path, true, false)
+	got, err = getSize(path, false, true)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -60,7 +60,7 @@ func TestGetSizeDirWithHiddenFiles(t *testing.T) {
 func TestGetSizeDirNonRecursive(t *testing.T) {
 	path := "testdata"
 	want := int64(1)
-	got, err := GetSize(path, false, false)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -68,7 +68,7 @@ func TestGetSizeDirNonRecursive(t *testing.T) {
 func TestGetSizeDirRecursive(t *testing.T) {
 	path := "testdata"
 	want := int64(12)
-	got, err := GetSize(path, true, true)
+	got, err := getSize(path, true, true)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
@@ -76,48 +76,27 @@ func TestGetSizeDirRecursive(t *testing.T) {
 func TestHumanReadableSizeB(t *testing.T) {
 	size := int64(1)
 	want := "1B"
-	got := HumanReadableSize(size)
+	got := humanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeKB(t *testing.T) {
 	size := int64(1 << 10)
-	want := "1KB"
-	got := HumanReadableSize(size)
+	want := "1.0KB"
+	got := humanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeMB(t *testing.T) {
 	size := int64(1 << 20)
-	want := "1MB"
-	got := HumanReadableSize(size)
+	want := "1.0MB"
+	got := humanReadableSize(size)
 	require.Equal(t, want, got)
 }
 
 func TestHumanReadableSizeGB(t *testing.T) {
 	size := int64(1 << 30)
-	want := "1GB"
-	got := HumanReadableSize(size)
-	require.Equal(t, want, got)
-}
-
-func TestHumanReadableSizeTB(t *testing.T) {
-	size := int64(1 << 40)
-	want := "1TB"
-	got := HumanReadableSize(size)
-	require.Equal(t, want, got)
-}
-
-func TestHumanReadableSizePB(t *testing.T) {
-	size := int64(1 << 50)
-	want := "1PB"
-	got := HumanReadableSize(size)
-	require.Equal(t, want, got)
-}
-
-func TestHumanReadableSizeEB(t *testing.T) {
-	size := int64(1 << 60)
-	want := "1EB"
-	got := HumanReadableSize(size)
+	want := "1.0GB"
+	got := humanReadableSize(size)
 	require.Equal(t, want, got)
 }

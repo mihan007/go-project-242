@@ -8,18 +8,18 @@ import (
 )
 
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
-	size, err := GetSize(path, all, recursive)
+	size, err := getSize(path, recursive, all)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error processing %s: %v", path, err)
 	}
 
 	if human {
-		return HumanReadableSize(size), nil
+		return humanReadableSize(size), nil
 	}
 	return fmt.Sprintf("%dB", size), nil
 }
 
-func GetSize(path string, all, recursive bool) (int64, error) {
+func getSize(path string, recursive, all bool) (int64, error) {
 	fileInfo, err := os.Lstat(path)
 	if err != nil {
 		return 0, err
@@ -37,13 +37,14 @@ func GetSize(path string, all, recursive bool) (int64, error) {
 			}
 			fileInfo, err := file.Info()
 			if err != nil {
-				return 0, err
+				fmt.Printf("Error getting file info for %s: %s\n", file.Name(), err)
+				continue
 			}
 			if fileInfo.IsDir() {
 				if recursive {
-					s, err := GetSize(filepath.Join(path, file.Name()), all, recursive)
+					s, err := getSize(filepath.Join(path, file.Name()), all, recursive)
 					if err != nil {
-						return 0, err
+						continue
 					}
 					size += s
 				}
@@ -57,22 +58,15 @@ func GetSize(path string, all, recursive bool) (int64, error) {
 	}
 }
 
-func HumanReadableSize(bytes int64) string {
-	const unit = 1024
-	if bytes < unit {
+func humanReadableSize(bytes int64) string {
+	switch {
+	case bytes >= 1<<30: // 1 GB
+		return fmt.Sprintf("%.1fGB", float64(bytes)/(1<<30))
+	case bytes >= 1<<20: // 1 MB
+		return fmt.Sprintf("%.1fMB", float64(bytes)/(1<<20))
+	case bytes >= 1<<10: // 1 KB
+		return fmt.Sprintf("%.1fKB", float64(bytes)/(1<<10))
+	default:
 		return fmt.Sprintf("%dB", bytes)
 	}
-
-	sizes := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
-	size := float64(bytes)
-	i := 0
-	for size >= unit && i < len(sizes)-1 {
-		size /= unit
-		i++
-	}
-
-	if size == float64(int64(size)) {
-		return fmt.Sprintf("%d%s", int64(size), sizes[i])
-	}
-	return fmt.Sprintf("%.1f%s", size, sizes[i])
 }

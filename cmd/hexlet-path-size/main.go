@@ -6,26 +6,23 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/urfave/cli/v3"
 )
 
-var human, all, recursive bool
-
 func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
-	filename := ""
+	human := cmd.Bool("human")
+	all := cmd.Bool("name")
+	recursive := cmd.Bool("recursive")
 	if cmd.NArg() > 0 {
-		filename = cmd.Args().Get(0)
-		dir, err := os.Getwd()
+		path := cmd.Args().Get(0)
+		res, err := code.GetPathSize(path, recursive, human, all)
 		if err != nil {
 			return err
 		}
-		res, err := code.GetPathSize(filepath.Join(dir, filename), recursive, human, all)
-		if err != nil {
-			return err
-		}
-		fmt.Println(res, filename)
+		fmt.Printf("%s\t%s\n", res, path)
+	} else {
+		fmt.Println(cmd.Usage)
 	}
 	return nil
 }
@@ -37,25 +34,22 @@ func main() {
 		Action: PrintFileOrDirSize,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:        "human",
-				Value:       false,
-				Usage:       "human-readable sizes (auto-select unit)",
-				Destination: &human,
-				Aliases:     []string{"H"},
+				Name:    "human",
+				Value:   false,
+				Usage:   "human-readable sizes (auto-select unit)",
+				Aliases: []string{"H"},
 			},
 			&cli.BoolFlag{
-				Name:        "all",
-				Value:       false,
-				Usage:       "include hidden files and directories",
-				Destination: &all,
-				Aliases:     []string{"a"},
+				Name:    "all",
+				Value:   false,
+				Usage:   "include hidden files and directories",
+				Aliases: []string{"a"},
 			},
 			&cli.BoolFlag{
-				Name:        "recursive",
-				Value:       false,
-				Usage:       "recursive size of directories",
-				Destination: &recursive,
-				Aliases:     []string{"r"},
+				Name:    "recursive",
+				Value:   false,
+				Usage:   "recursive size of directories",
+				Aliases: []string{"r"},
 			},
 		},
 	}
