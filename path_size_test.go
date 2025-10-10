@@ -73,30 +73,35 @@ func TestGetSizeDirRecursive(t *testing.T) {
 	require.Equal(t, want, got)
 }
 
-func TestHumanReadableSizeB(t *testing.T) {
-	size := int64(1)
-	want := "1B"
-	got := humanReadableSize(size)
-	require.Equal(t, want, got)
-}
+func TestHumanReadableSize(t *testing.T) {
+	tests := map[string]struct {
+		input  int64
+		result string
+	}{
+		"bytes": {
+			input:  1,
+			result: "1B",
+		},
+		"kilobytes": {
+			input:  1 << 10,
+			result: "1.0KB",
+		},
+		"megabytes": {
+			input:  1 << 20,
+			result: "1.0MB",
+		},
+		"gigabytes": {
+			input:  1 << 30,
+			result: "1.0GB",
+		},
+	}
 
-func TestHumanReadableSizeKB(t *testing.T) {
-	size := int64(1 << 10)
-	want := "1.0KB"
-	got := humanReadableSize(size)
-	require.Equal(t, want, got)
-}
-
-func TestHumanReadableSizeMB(t *testing.T) {
-	size := int64(1 << 20)
-	want := "1.0MB"
-	got := humanReadableSize(size)
-	require.Equal(t, want, got)
-}
-
-func TestHumanReadableSizeGB(t *testing.T) {
-	size := int64(1 << 30)
-	want := "1.0GB"
-	got := humanReadableSize(size)
-	require.Equal(t, want, got)
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			if got, expected := humanReadableSize(test.input), test.result; got != expected {
+				t.Fatalf("humanReadableSize(%q) returned %q; expected %q", test.input, got, expected)
+			}
+		})
+	}
 }
