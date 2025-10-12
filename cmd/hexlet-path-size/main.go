@@ -12,7 +12,7 @@ import (
 
 func PrintFileOrDirSize(ctx context.Context, cmd *cli.Command) error {
 	human := cmd.Bool("human")
-	all := cmd.Bool("name")
+	all := cmd.Bool("all")
 	recursive := cmd.Bool("recursive")
 	if cmd.NArg() > 0 {
 		path := cmd.Args().Get(0)
