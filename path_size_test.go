@@ -22,6 +22,14 @@ func TestGetSizeNonZeroFile(t *testing.T) {
 	require.Equal(t, want, got)
 }
 
+func TestGetSizeUnicodeNameFile(t *testing.T) {
+	path := "testdata/⭐️"
+	want := int64(7)
+	got, err := getSize(path, false, false)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
 func TestGetSizeNonExistentFile(t *testing.T) {
 	path := "testdata/file2.txt"
 	_, err := getSize(path, false, false)
@@ -59,7 +67,7 @@ func TestGetSizeDirWithHiddenFiles(t *testing.T) {
 
 func TestGetSizeDirNonRecursive(t *testing.T) {
 	path := "testdata"
-	want := int64(1)
+	want := int64(8)
 	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
@@ -67,7 +75,23 @@ func TestGetSizeDirNonRecursive(t *testing.T) {
 
 func TestGetSizeDirRecursive(t *testing.T) {
 	path := "testdata"
-	want := int64(12)
+	want := int64(34)
+	got, err := getSize(path, true, true)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestGetSizeUnicodeDirNonRecursive(t *testing.T) {
+	path := "testdata/🤗"
+	want := int64(10)
+	got, err := getSize(path, false, false)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestGetSizeUnicodeDirRecursive(t *testing.T) {
+	path := "testdata/🤗"
+	want := int64(15)
 	got, err := getSize(path, true, true)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
