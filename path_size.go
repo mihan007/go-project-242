@@ -20,7 +20,7 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 }
 
 func getSize(path string, recursive, all bool) (int64, error) {
-	fileInfo, err := os.Lstat(path)
+	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return 0, err
 	}

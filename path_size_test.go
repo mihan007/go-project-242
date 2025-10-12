@@ -1,6 +1,8 @@
 package code
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -93,6 +95,66 @@ func TestGetSizeUnicodeDirRecursive(t *testing.T) {
 	path := "testdata/🤗"
 	want := int64(15)
 	got, err := getSize(path, true, true)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestGetSizeSymlinkFile(t *testing.T) {
+	targetRelative := "./testdata/file0.txt"
+	targetAbs, err := filepath.Abs(targetRelative)
+	if err != nil {
+		t.Errorf("Error getting absolute path: %v\n", err)
+	}
+	linkRelative := "./testdata/file0_symlink.txt"
+	linkAbs, err := filepath.Abs(linkRelative)
+	if err != nil {
+		t.Errorf("Error getting absolute path: %v\n", err)
+	}
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Errorf("Error removing symlink: %v\n", err)
+		}
+	}(linkAbs)
+
+	err = os.Symlink(targetAbs, linkAbs)
+	if err != nil {
+		t.Errorf("Error creating symlink: %v\n", err)
+		return
+	}
+	path := "testdata/file0_symlink.txt"
+	want := int64(0)
+	got, err := getSize(path, false, false)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+}
+
+func TestGetSizeSymlinkDir(t *testing.T) {
+	targetRelative := "./testdata/dir1"
+	targetAbs, err := filepath.Abs(targetRelative)
+	if err != nil {
+		t.Errorf("Error getting absolute path: %v\n", err)
+	}
+	linkRelative := "./testdata/dir1_symlink"
+	linkAbs, err := filepath.Abs(linkRelative)
+	if err != nil {
+		t.Errorf("Error getting absolute path: %v\n", err)
+	}
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Errorf("Error removing symlink: %v\n", err)
+		}
+	}(linkAbs)
+
+	err = os.Symlink(targetAbs, linkAbs)
+	if err != nil {
+		t.Errorf("Error creating symlink: %v\n", err)
+		return
+	}
+	path := "testdata/dir1_symlink"
+	want := int64(2)
+	got, err := getSize(path, false, false)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
 }
