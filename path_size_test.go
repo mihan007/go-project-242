@@ -159,6 +159,18 @@ func TestGetSizeSymlinkDir(t *testing.T) {
 	require.Equal(t, want, got)
 }
 
+func TestGetSizeNoAvailableFile(t *testing.T) {
+	path := "unknown_file"
+	_, err := getSize(path, true, true)
+	require.Error(t, err)
+}
+
+func TestGetSizeNoAvailableDir(t *testing.T) {
+	path := "unknown_dir/"
+	_, err := getSize(path, true, true)
+	require.Error(t, err)
+}
+
 func TestHumanReadableSize(t *testing.T) {
 	tests := map[string]struct {
 		input  int64
